@@ -1,0 +1,54 @@
+services:
+  na_1:
+    image: nats
+    command: -c /etc/my-server.conf --name na_1 -p 4222
+    volumes:
+      - ./na.conf:/etc/my-server.conf
+    ports:
+      - 4222:4222
+  na_2:
+    image: nats
+    command: -c /etc/my-server.conf --name na_2 -p 4223
+    volumes:
+      - ./na.conf:/etc/my-server.conf
+    ports:
+      - 4223:4223
+  na_3:
+    image: nats
+    command: -c /etc/my-server.conf --name na_3 -p 4224
+    volumes:
+      - ./na.conf:/etc/my-server.conf
+    ports:
+      - 4224:4224
+
+  eu_1:
+    image: nats
+    command: -c /etc/my-server.conf --name eu_1
+    volumes:
+      - ./eu.conf:/etc/my-server.conf
+  eu_2:
+    image: nats
+    command: -c /etc/my-server.conf --name eu_2
+    volumes:
+      - ./eu.conf:/etc/my-server.conf
+  eu_3:
+    image: nats
+    command: -c /etc/my-server.conf --name eu_3
+    volumes:
+      - ./eu.conf:/etc/my-server.conf
+
+  ap_1:
+    image: nats
+    command: -c /etc/my-server.conf --name ap_1
+    volumes:
+      - ./ap.conf:/etc/my-server.conf
+  ap_2:
+    image: nats
+    command: -c /etc/my-server.conf --name ap_2
+    volumes:
+      - ./ap.conf:/etc/my-server.conf
+  ap_3:
+    image: nats
+    command: -c /etc/my-server.conf --name ap_3
+    volumes:
+      - ./ap.conf:/etc/my-server.conf
