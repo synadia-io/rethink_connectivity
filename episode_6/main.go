@@ -14,7 +14,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	nc.Subscribe("math.double", func(msg *nats.Msg) {
+	nc.QueueSubscribe("math.double", "math", func(msg *nats.Msg) {
 		num, err := strconv.Atoi(string(msg.Data))
 		if err != nil {
 			msg.Respond([]byte("Body is not a number"))
@@ -23,7 +23,7 @@ func main() {
 		}
 	})
 
-	nc.Subscribe("math.triple", func(msg *nats.Msg) {
+	nc.QueueSubscribe("math.triple", "math", func(msg *nats.Msg) {
 		num, err := strconv.Atoi(string(msg.Data))
 		if err != nil {
 			msg.Respond([]byte("Body is not a number"))
@@ -32,7 +32,7 @@ func main() {
 		}
 	})
 
-	nc.Subscribe("math.quadruple", func(msg *nats.Msg) {
+	nc.QueueSubscribe("math.quadruple", "math", func(msg *nats.Msg) {
 		num, err := strconv.Atoi(string(msg.Data))
 		if err != nil {
 			msg.Respond([]byte("Body is not a number"))
