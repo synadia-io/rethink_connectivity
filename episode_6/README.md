@@ -19,7 +19,7 @@ nsc list keys -A
 
 nsc generate config --nats-resolver --sys-account SYS > resolver.conf
 
-nats-server -c [resolver conf](resolver.conf.md)
+nats-server -c resolver conf
 
 nsc push -A
 
