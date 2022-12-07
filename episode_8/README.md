@@ -66,10 +66,10 @@ nsc edit signing-key --sk "YOUR_SIGNING_KEY" \
 nsc describe user jeremy
 
 # Now let's try our new dm feature, we'll subscribe to the subject that's from liz to jeremy
-nats sub "chat.dm.synadia.liz.jeremy"
+nats sub "chat.dm.synadia.liz.jeremy" --context jeremy
 
 # And liz can publish to this subject
-nats pub "chat.post.synadia.liz.jeremy" "Hey" --context liz
+nats pub "chat.dm.synadia.liz.jeremy" "Hey" --context liz
 
 # With just a couple commands, we created a set of dynamic permissions that don't require any updates to the services or people using those credentials. Scoped signing keys are a little known feature, but can be incredibly powerful for streamlining the process of minting new user jwts
 
