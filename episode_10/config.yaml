@@ -1,0 +1,6 @@
+input:
+  nats:
+    subject: "people"
+    urls: [nats://pi.local:4222]
+    auth:
+      user_credentials_file: user.creds
