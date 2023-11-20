@@ -1,1 +1,1 @@
-# Stream Processing with Benthos and NATS
+# NATS JetStream API: Streams
