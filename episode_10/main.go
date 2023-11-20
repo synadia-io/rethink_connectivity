@@ -20,7 +20,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	nc, err := nats.Connect(nats.DefaultURL)
+	nc, err := nats.Connect("connect.ngs.global", nats.UserCredentials("user.creds"), nats.Name("Orders - "+os.Args[1]))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,6 +36,7 @@ func main() {
 		Name:        "orders",
 		Description: "Stream of orders",
 		Subjects:    []string{"orders.*"},
+		MaxBytes:    1024 * 1024 * 1024,
 	})
 	if err != nil {
 		log.Fatal(err)
