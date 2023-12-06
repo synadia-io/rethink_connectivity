@@ -1,1 +1,1 @@
-# NATS JetStream API: Streams
+# NATS JetStream: Basics
