@@ -2,6 +2,8 @@
 
 This example shows how you can build a worker consumer to interact with a work queue stream
 
+## Creating a stream
+
 You'll need a stream to get this working, simply create one with the NATS cli:
 
 ```sh
@@ -23,12 +25,16 @@ nats s create jobs
 Stream jobs was created
 ```
 
+## Publishing to the stream
+
 Then you can publish high or low priority jobs to the stream:
 
 ```sh
 nats bench --pub 10 jobs.high.my_job_id --syncpub --msgs 5000
 nats bench --pub 10 jobs.low.my_job_id --syncpub --msgs 5000
 ```
+
+## Running the workers
 
 Once messages are in the stream, you can fire up a worker. This go program takes 2 arguments, one for the priority and one for the id of the worker (for logging purposes):
 
@@ -39,3 +45,5 @@ seq 10 | xargs -P10 -I {} go run worker.go high {}
 # Run 2 low priority workers
 seq 2 | xargs -P2 -I {} go run worker.go low {}
 ```
+
+## Adding a DLQ

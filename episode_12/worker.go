@@ -19,7 +19,7 @@ func main() {
 
 	log.Default().SetPrefix(fmt.Sprintf("[%s] ", workerName))
 
-	nc, err := nats.Connect("connect.ngs.global", nats.UserCredentials("user.creds"), nats.Name(consumerName))
+	nc, err := nats.Connect("connect.ngs.global", nats.UserCredentials(consumerName+".creds"), nats.Name(workerName))
 	if err != nil {
 		log.Fatal(err)
 	}
