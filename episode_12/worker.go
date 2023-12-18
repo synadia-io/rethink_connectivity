@@ -58,6 +58,11 @@ func main() {
 			log.Printf("Error getting metadata: %s\n", err)
 			return
 		}
+		if priority == "low" {
+			log.Println("Error processing job")
+			return
+		}
+
 		log.Printf("Received message sequence: %d\n", meta.Sequence.Stream)
 		time.Sleep(10 * time.Millisecond)
 		msg.Ack()

@@ -47,3 +47,13 @@ seq 2 | xargs -P2 -I {} go run worker.go low {}
 ```
 
 ## Adding a DLQ
+
+Messages that fail to be delivered and reach max attempts will stop being delivered, and NATS will emit an advisory:
+
+`$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.jobs.{consumer_name}`
+
+This advisory can be used to keep track of jobs that have not completed processing for whatever reason. To keep track of this, you can create a stream:
+
+```sh
+nats s create jobs_dlq --subjects '$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.jobs.{consumer_name}'
+```
