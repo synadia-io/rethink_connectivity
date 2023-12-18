@@ -13,10 +13,18 @@ import (
 )
 
 func main() {
-	nc, err := nats.Connect("connect.ngs.global", nats.UserCredentials("user.creds"), nats.Name("worker_high"))
+	priority, id := os.Args[1], os.Args[2]
+	consumerName := fmt.Sprintf("worker_%s", priority)
+	workerName := fmt.Sprintf("worker_%s_%s", priority, id)
+
+	log.Default().SetPrefix(fmt.Sprintf("[%s] ", workerName))
+
+	nc, err := nats.Connect("connect.ngs.global", nats.UserCredentials("user.creds"), nats.Name(consumerName))
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer nc.Close()
+	log.Printf("connected to %s", nc.ConnectedUrl())
 
 	js, err := jetstream.New(nc)
 	if err != nil {
@@ -26,15 +34,18 @@ func main() {
 	ctx := context.Background()
 
 	consumer, err := js.CreateOrUpdateConsumer(ctx, "jobs", jetstream.ConsumerConfig{
-		Name:        "worker_high",
-		Durable:     "worker_high",
-		Description: "High priority worker pool",
+		Name:        consumerName,
+		Durable:     consumerName,
+		Description: fmt.Sprintf("Worker pool with priority %s", priority),
 		BackOff: []time.Duration{
-			1 * time.Second,
 			5 * time.Second,
 			10 * time.Second,
+			15 * time.Second,
 		},
 		MaxDeliver: 4,
+		FilterSubjects: []string{
+			fmt.Sprintf("jobs.%s.>", priority),
+		},
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -45,11 +56,11 @@ func main() {
 		meta, err := msg.Metadata()
 		if err != nil {
 			log.Printf("Error getting metadata: %s\n", err)
-			msg.Nak()
 			return
 		}
-
-		log.Printf("Not acking message message: %s\n", fmt.Sprint(meta.Sequence.Stream))
+		log.Printf("Received message sequence: %d\n", meta.Sequence.Stream)
+		time.Sleep(10 * time.Millisecond)
+		msg.Ack()
 	})
 	if err != nil {
 		log.Fatal(err)
