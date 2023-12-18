@@ -55,5 +55,11 @@ Messages that fail to be delivered and reach max attempts will stop being delive
 This advisory can be used to keep track of jobs that have not completed processing for whatever reason. To keep track of this, you can create a stream:
 
 ```sh
-nats s create jobs_dlq --subjects '$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.jobs.{consumer_name}'
+nats s create jobs_dlq --subjects '$JS.EVENT.ADVISORY.CONSUMER.MAX_DELIVERIES.jobs.*'
+```
+
+The payload information on the events should give you everything you need to process. For tooling purposes, we can also use the new stream metadata feature to mark this stream as a dead letter queue, so tooling can pick up on the semantics:
+
+```sh
+nats s edit jobs_dlq --metadata="dead_letter_queue=true"
 ```
