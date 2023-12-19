@@ -50,7 +50,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	consumer.Messages()
 
 	c, err := consumer.Consume(func(msg jetstream.Msg) {
 		meta, err := msg.Metadata()
