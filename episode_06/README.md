@@ -27,7 +27,7 @@ nats context save my_org_sys --nsc "nsc://my_org/SYS/sys"
 nats context save my_org_user_a --nsc "nsc://my_org/TEAM_A/user_a"
 nats context save my_org_math --nsc "nsc://my_org/TEAM_B/math"
 
-nats generate creds -n math > math.creds
+nsc generate creds -n math > math.creds
 
 go run math_service.go
 
