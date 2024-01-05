@@ -1,4 +1,4 @@
-# Rethink Connectivity: Episode 5
+# Episode 5: Superclusters
 
 https://rethink.synadia.com/episodes/5/
 

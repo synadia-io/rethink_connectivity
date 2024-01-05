@@ -1,4 +1,4 @@
-# Rethink Connectivity: Episode 4
+# Episode 4: Clusters
 
 https://rethink.synadia.com/episodes/4/
 

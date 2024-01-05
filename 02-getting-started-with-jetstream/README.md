@@ -1,1 +1,1 @@
-# Getting started with JetStream
+# Episode 2: Getting started with JetStream

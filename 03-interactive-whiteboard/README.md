@@ -1,4 +1,4 @@
-# Rethink Connectivity: Episode 3 
+# Episode 3: Interactive Whiteboard
 
 https://rethink.synadia.com/episodes/3/
 

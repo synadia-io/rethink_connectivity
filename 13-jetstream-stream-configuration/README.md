@@ -1,4 +1,4 @@
-# NATS JetStream: Stream Configuration
+# Episode 13: NATS JetStream: Stream Configuration
 
 ## Drawing
 

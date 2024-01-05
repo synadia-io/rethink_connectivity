@@ -1,4 +1,4 @@
-# Episode 6
+# Episode 6: Decentralized Auth
 
 ```bash
 nsc add operator --generate-signing-key --sys --name my_org

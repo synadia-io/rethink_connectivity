@@ -1,4 +1,4 @@
-# Rethink Connectivity: Episode 8
+# Episode 8: Scoped Signing Keys
 
 ```sh
 # After you've loaded your account from NGS into nsc, you can look at your account details
@@ -30,7 +30,7 @@ nsc edit signing-key --sk "YOUR_SIGNING_KEY" \
     --allow-pub "chat.post.{{tag(org)}}.{{name()}}" \
     --allow-sub "chat.post.{{tag(org)}}.*" \
     --allow-pub-response
-    
+
 # Now let's create some users, using our chat_user scoped signing key
 nsc add user jeremy -K chat_user --tag org:synadia
 nsc add user liz -K chat_user --tag org:synadia

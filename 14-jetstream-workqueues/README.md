@@ -1,4 +1,4 @@
-# NATS JetStream: WorkQueue Stream
+# Episode 14: NATS JetStream: WorkQueue Stream
 
 This example shows how you can build a worker consumer to interact with a work queue stream
 

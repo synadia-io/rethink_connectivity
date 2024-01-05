@@ -1,1 +1,1 @@
-# NATS vs Kafka pt. 2
+# Episode 11: NATS vs Kafka Part 1

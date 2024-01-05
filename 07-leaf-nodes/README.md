@@ -1,4 +1,4 @@
-# Rethink Connectivity Episode 7
+# Episode 7: Leaf Nodes
 
 ```sh
 # show ngs credentials

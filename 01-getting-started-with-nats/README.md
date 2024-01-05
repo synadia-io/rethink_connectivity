@@ -1,1 +1,1 @@
-# Getting Started with NATS
+# Episode 1: Getting Started with NATS
