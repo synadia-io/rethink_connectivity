@@ -1,0 +1,168 @@
+{
+  "main": {
+    "id": "5fb39c6d1e42d22e",
+    "type": "split",
+    "children": [
+      {
+        "id": "47488150599b4356",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "39330cdb6b8d3a1b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "13-jetstream-stream-configuration/README.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3fa8b2ceef78b117",
+    "type": "split",
+    "children": [
+      {
+        "id": "643bc09b1c38b83b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "48f0a5cac79ff0d7",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "904c7360c816c35b",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "41db2b757944f213",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0278e53031b669ab",
+    "type": "split",
+    "children": [
+      {
+        "id": "ae4afe39453451ae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8a67ad07939ee613",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "13-jetstream-stream-configuration/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "41c10dc9ccd1c619",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "13-jetstream-stream-configuration/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "b83cf26fc9c5ae79",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "78422d38a1d94cb9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "13-jetstream-stream-configuration/README.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "39330cdb6b8d3a1b",
+  "lastOpenFiles": [
+    "14-jetstream-workqueues/README.md",
+    "13-jetstream-stream-configuration/README.md",
+    "12-jetstream-basics/README.md",
+    "11-nats-vs-kafka-2/README.md",
+    "10-nats-vs-kafka-1/README.md",
+    "09-microservices/README.md",
+    "08-scoped-signing-keys/README.md",
+    "07-leaf-nodes/README.md",
+    "06-decentralized-auth/README.md",
+    "05-superclusters/README.md",
+    "04-clusters/README.md",
+    "03-interactive-whiteboard/README.md",
+    "02-getting-started-with-jetstream/README.md",
+    "02-getting-started-with-jetstream/thumbnail.jpeg",
+    "01-getting-started-with-nats/README.md",
+    "01-getting-started-with-nats/thumbnail.jpeg"
+  ]
+}

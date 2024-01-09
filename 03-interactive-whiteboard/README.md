@@ -1,6 +1,6 @@
 # Episode 3: Interactive Whiteboard
 
-https://rethink.synadia.com/episodes/3/
+![thumbnail](thumbnail.jpeg)
 
 In this episode we create a persistent, interactive whiteboard using NATS JetStream and websockets support.
 

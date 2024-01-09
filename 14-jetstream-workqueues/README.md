@@ -1,5 +1,7 @@
 # Episode 14: NATS JetStream: WorkQueue Stream
 
+![thumbnail](thumbnail.jpeg)
+
 This example shows how you can build a worker consumer to interact with a work queue stream
 
 ## Creating a stream

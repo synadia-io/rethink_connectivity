@@ -1,5 +1,7 @@
 # Episode 13: NATS JetStream: Stream Configuration
 
+![thumbnail](thumbnail.jpeg)
+
 ## Drawing
 
 ![Drawing](drawing.png)

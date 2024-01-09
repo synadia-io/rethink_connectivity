@@ -1,5 +1,7 @@
 # Episode 7: Leaf Nodes
 
+![thumbnail](thumbnail.jpeg)
+
 ```sh
 # show ngs credentials
 nats account info

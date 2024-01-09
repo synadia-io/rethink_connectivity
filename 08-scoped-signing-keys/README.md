@@ -1,5 +1,7 @@
 # Episode 8: Scoped Signing Keys
 
+![thumbnail](thumbnail.jpeg)
+
 ```sh
 # After you've loaded your account from NGS into nsc, you can look at your account details
 nsc describe account

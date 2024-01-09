@@ -1,6 +1,6 @@
 # Episode 4: Clusters
 
-https://rethink.synadia.com/episodes/4/
+![thumbnail](thumbnail.jpeg)
 
 In Episode 4 we look at configuring our first NATS cluster with route connections between multiple NATS servers.
 

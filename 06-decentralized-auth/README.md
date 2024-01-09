@@ -1,5 +1,7 @@
 # Episode 6: Decentralized Auth
 
+![thumbnail](thumbnail.jpeg)
+
 ```bash
 nsc add operator --generate-signing-key --sys --name my_org
 
