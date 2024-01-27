@@ -1,5 +1,7 @@
 # Episode 15: This ONE feature makes NATS more powerful than Kafka, Pulsar, RabbitMQ and Redis
 
+## Orders
+
 ## Drawing
 
 TODO
@@ -49,15 +51,10 @@ TODO
   - Subject: `orders.{location}.{id}.{status}`
   - States:
     - Pending
-    - Validation
     - Confirmed
-    - Processing
     - Shipped
     - Delivered
-    - Completed
     - Cancelled
-    - Returned
-    - Failed
 
 ### Use cases
 
