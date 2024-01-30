@@ -1,0 +1,23 @@
+input:
+  label: orders
+  nats_jetstream:
+    stream: orders
+    subject: orders.*.*.pending
+    urls: ["nats://connect.ngs.global"]
+    auth:
+      user_credentials_file: user.creds
+
+pipeline:
+  processors:
+    - mapping: |
+        root = this
+        root.status = "confirmed"
+        root.created_at = now()
+
+output:
+  label: "event_publisher"
+  nats_jetstream:
+    urls: ["nats://connect.ngs.global"]
+    subject: orders.${!location}.${!id}.${!status}
+    auth:
+      user_credentials_file: user.creds
