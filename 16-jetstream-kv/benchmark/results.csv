@@ -1,0 +1,57 @@
+name,msgs/s
+1,29227
+1,42000
+5,69156
+5,128694
+25,127327
+25,123658
+50,162555
+50,126138
+100,154790
+100,91567
+
+===============================go test -bench=. -benchtime=1s --cpu 1
+goos: darwin
+goarch: arm64
+pkg: github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream
+BenchmarkJetStreamKeyValuePutDistinct 	  29227	    42160 ns/op
+BenchmarkRedisSetDistinct             	  42000	    27468 ns/op
+PASS
+ok  	github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream	3.117s
+
+===============================go test -bench=. -benchtime=1s --cpu 5
+goos: darwin
+goarch: arm64
+pkg: github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream
+BenchmarkJetStreamKeyValuePutDistinct-5   	  69156	    16738 ns/op
+BenchmarkRedisSetDistinct-5               	 128694	    10111 ns/op
+PASS
+ok  	github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream	2.765s
+
+===============================go test -bench=. -benchtime=1s --cpu 25
+goos: darwin
+goarch: arm64
+pkg: github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream
+BenchmarkJetStreamKeyValuePutDistinct-25    	 127327	     8841 ns/op
+BenchmarkRedisSetDistinct-25                	 123658	    11361 ns/op
+PASS
+ok  	github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream	2.766s
+
+===============================go test -bench=. -benchtime=1s --cpu 50
+go test -bench=. -benchtime=1s --cpu 50
+goos: darwin
+goarch: arm64
+pkg: github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream
+BenchmarkJetStreamKeyValuePutDistinct-50    	 162555	     7646 ns/op
+BenchmarkRedisSetDistinct-50                	 126138	    12390 ns/op
+PASS
+ok  	github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream	2.987s
+
+===============================go test -bench=. -benchtime=1s --cpu 100
+goos: darwin
+goarch: arm64
+pkg: github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream
+BenchmarkJetStreamKeyValuePutDistinct-100     	 154790	     7418 ns/op
+BenchmarkRedisSetDistinct-100                 	  91567	    13594 ns/op
+PASS
+ok  	github.com/synadia-io/rethink_connectivity/jetstream_kv/benchmark/jetstream	2.585s
