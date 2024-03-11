@@ -24,7 +24,7 @@ jo name="Synadia Cloud" | nats req review.products.synadia-cloud.create
 List products
 
 ```bash
-nats req review.products "" # Maybe add some sorting here?
+nats req review.products.list "" # Maybe add some sorting here?
 # [{ id: "synadia-cloud" "name": "Synadia Cloud", count: 445, stars: 4.8 }]
 ```
 
