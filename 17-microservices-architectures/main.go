@@ -46,7 +46,6 @@ func main() {
 	products := svc.AddGroup("reviews.products")
 	products.AddEndpoint("list_products", micro.HandlerFunc(api.ListProducts), micro.WithEndpointSubject("list"))
 	products.AddEndpoint("create_product", micro.HandlerFunc(api.CreateProduct), micro.WithEndpointSubject("create"))
-	products.AddEndpoint("update_product", micro.HandlerFunc(api.CreateProduct), micro.WithEndpointSubject("update.*"))
 	products.AddEndpoint("delete_product", micro.HandlerFunc(api.CreateProduct), micro.WithEndpointSubject("delete.*"))
 
 	runtime.Goexit()
