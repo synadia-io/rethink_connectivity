@@ -3,11 +3,14 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"log/slog"
 	"runtime"
 
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/micro"
 )
+
+var logger *slog.Logger
 
 func main() {
 	nc, err := nats.Connect(nats.DefaultURL)
@@ -24,9 +27,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	math := svc.AddGroup("math")
+	h := slog.NewJSONHandler(&natsLogWriter{"math.log." + svc.Info().ID, nc}, nil)
+	natsHandler := &natsSlogHandler{h, slog.LevelInfo}
+	logger = slog.New(natsHandler)
 
-	math.AddEndpoint("add",
+	m := svc.AddGroup("math")
+
+	m.AddEndpoint("add",
 		micro.HandlerFunc(addHandler),
 		micro.WithEndpointMetadata(map[string]string{
 			"description":     "Adds two numbers",
@@ -35,8 +42,8 @@ func main() {
 			"response_schema": SchemaFor(&MathResponse{}),
 		}))
 
-	math.AddEndpoint("subtract",
-		micro.HandlerFunc(addHandler),
+	m.AddEndpoint("subtract",
+		micro.HandlerFunc(subtractHandler),
 		micro.WithEndpointMetadata(map[string]string{
 			"description":     "Subtracts two numbers",
 			"format":          "application/json",
@@ -44,8 +51,8 @@ func main() {
 			"response_schema": SchemaFor(&MathResponse{}),
 		}))
 
-	math.AddEndpoint("multiply",
-		micro.HandlerFunc(addHandler),
+	m.AddEndpoint("multiply",
+		micro.HandlerFunc(multiplyHandler),
 		micro.WithEndpointMetadata(map[string]string{
 			"description":     "Multiplies two numbers",
 			"format":          "application/json",
@@ -53,8 +60,8 @@ func main() {
 			"response_schema": SchemaFor(&MathResponse{}),
 		}))
 
-	math.AddEndpoint("divide",
-		micro.HandlerFunc(addHandler),
+	m.AddEndpoint("divide",
+		micro.HandlerFunc(divideHandler),
 		micro.WithEndpointMetadata(map[string]string{
 			"description":     "Divides two numbers",
 			"format":          "application/json",
@@ -68,9 +75,10 @@ func main() {
 }
 
 func addHandler(req micro.Request) {
+	logger.Info("addHandler called", "subject", req.Subject())
 	var calcRequest MathRequest
 	if err := json.Unmarshal(req.Data(), &calcRequest); err != nil {
-		log.Println(err)
+		logger.Error("error", "error", err)
 		req.Error("400", "unable to parse request", nil)
 		return
 	}
@@ -81,9 +89,10 @@ func addHandler(req micro.Request) {
 }
 
 func subtractHandler(req micro.Request) {
+	logger.Info("subtractHandler called", "subject", req.Subject())
 	var calcRequest MathRequest
 	if err := json.Unmarshal(req.Data(), &calcRequest); err != nil {
-		log.Println(err)
+		logger.Error("error", "error", err)
 		req.Error("400", "unable to parse request", nil)
 		return
 	}
@@ -94,9 +103,10 @@ func subtractHandler(req micro.Request) {
 }
 
 func multiplyHandler(req micro.Request) {
+	logger.Info("multiplyHandler called", "subject", req.Subject())
 	var calcRequest MathRequest
 	if err := json.Unmarshal(req.Data(), &calcRequest); err != nil {
-		log.Println(err)
+		logger.Error("error", "error", err)
 		req.Error("400", "unable to parse request", nil)
 		return
 	}
@@ -107,10 +117,17 @@ func multiplyHandler(req micro.Request) {
 }
 
 func divideHandler(req micro.Request) {
+	logger.Info("divideHandler called", "subject", req.Subject())
 	var calcRequest MathRequest
 	if err := json.Unmarshal(req.Data(), &calcRequest); err != nil {
-		log.Println(err)
+		logger.Error("error", "error", err)
 		req.Error("400", "unable to parse request", nil)
+		return
+	}
+
+	if calcRequest.B == 0 {
+		logger.Error("cannot divide by zero", "subject", req.Subject())
+		req.Error("400", "cannot divide by zero", nil)
 		return
 	}
 
