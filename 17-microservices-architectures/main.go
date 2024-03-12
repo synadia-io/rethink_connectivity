@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"log/slog"
-	"runtime"
+	"strconv"
 
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-io/nats.go/micro"
 )
 
 var logger *slog.Logger
+var logLevel slog.Level = slog.LevelError
+var natsHandler *natsSlogHandler
 
 func main() {
 	nc, err := nats.Connect(nats.DefaultURL)
@@ -28,7 +32,7 @@ func main() {
 	}
 
 	h := slog.NewJSONHandler(&natsLogWriter{"math.log." + svc.Info().ID, nc}, nil)
-	natsHandler := &natsSlogHandler{h, slog.LevelInfo}
+	natsHandler = &natsSlogHandler{h, slog.LevelInfo}
 	logger = slog.New(natsHandler)
 
 	m := svc.AddGroup("math")
@@ -71,7 +75,41 @@ func main() {
 
 	log.Printf("Listening on %q for %q, %q, %q, %q \n", nc.ConnectedAddr(), "math.add", "math.subtract", "math.multiply", "math.divide")
 
-	runtime.Goexit()
+	js, err := jetstream.New(nc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:      "config",
+		Description: "config for my microservices",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	watcher, err := kv.Watch(ctx, "math.log_level")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for entry := range watcher.Updates() {
+		if entry == nil {
+			continue
+		}
+
+		level, err := strconv.Atoi(string(entry.Value()))
+		if err != nil {
+			logger.Error("invalid log level", "error", err)
+			continue
+		}
+
+		logLevel = slog.Level(level)
+		natsHandler.level = logLevel
+		logger.Log(ctx, 6, "log level set to "+logLevel.String())
+	}
+
 }
 
 func addHandler(req micro.Request) {
