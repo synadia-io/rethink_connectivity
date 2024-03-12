@@ -2,11 +2,11 @@
 
 ## Title
 
-Micro-services reimagined
+Rethinking Micro-services: Basics
 
 ## Thesis
 
-We're told we need a dozen different technologies to get a microservices architecture up and running, but what if you could do nearly everything with a single technology, and a much, much simpler set of tools?
+Introduce the current state of micro-services, how much kit is currently required, and how NATS is well suited to replace many of these technologies in one place. Today I’m going to go over what’s generally required for a micro-services architecture, and what portions of NATS can be used to replace entire pieces of that infrastructure. In future videos in this series, I’m going to dive deep into each of these use cases, and go over practical implementations, pros and cons of each.
 
 ## Intro
 
@@ -14,18 +14,16 @@ We're told we need a dozen different technologies to get a microservices archite
 
 ## The micro-service stack
 
-- API Gateway: NATS Micro
+- API Gateway: NATS micro
+- Load balancing: NATS Queue Groups, NATS Micro
 - Discovery: NATS Micro
-- Load balancing: NATS Queue Groups
 - Canary management: Subject Mapping
 - Logging: Core NATS
 - Monitoring & observability: NATS Micro, NATS Tracing
 - Authentication/Authorization: NATS JWT Auth
-- Configuraion management: JetStream KV
+- Configuration management: JetStream KV
 - Data store: JetStream Streams, KV, ObjectStore
 - Deployment: NEX
-
-## The 1:1 Problem
 
 ## Location Transparency
 
