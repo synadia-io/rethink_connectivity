@@ -12,6 +12,19 @@ We're told we need a dozen different technologies to get a microservices archite
 
 [TBD: Talk about how we got to where we are, and why the monolith vs microservice debate is happening, and why nobody has truly verbalized the true problem]
 
+## The micro-service stack
+
+- API Gateway: NATS Micro
+- Discovery: NATS Micro
+- Load balancing: NATS Queue Groups
+- Canary management: Subject Mapping
+- Logging: Core NATS
+- Monitoring & observability: NATS Micro, NATS Tracing
+- Authentication/Authorization: NATS JWT Auth
+- Configuraion management: JetStream KV
+- Data store: JetStream Streams, KV, ObjectStore
+- Deployment: NEX
+
 ## The 1:1 Problem
 
 ## Location Transparency
