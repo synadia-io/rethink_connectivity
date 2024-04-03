@@ -1,0 +1,27 @@
+input:
+  aws_s3:
+    bucket: "codegangsta-geodata"
+    region: "us-west-1"
+    scanner:
+      csv:
+        custom_delimiter: ";"
+
+pipeline:
+  processors:
+    - mapping: |
+        iso2_code = this.get("ISO2 CODE")
+        iso3_code = this.get("ISO3 CODE")
+        label = this.get("LABEL EN")
+        location = this.geo_point_2d
+
+output:
+  broker:
+    outputs:
+      - nats_kv:
+          urls: [nats://localhost:4222]
+          bucket: countries
+          key: ${! iso2_code}
+      - nats_kv:
+          urls: [nats://localhost:4222]
+          bucket: countries
+          key: ${! iso3_code}

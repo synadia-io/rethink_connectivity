@@ -1,4 +1,0 @@
-input:
-  nats:
-    urls: ["nats://localhost:4222"]
-    subject: hello.world
