@@ -3,8 +3,8 @@ customers: database.db
 	benthos -c seed/create_customers.yaml -e .env
 
 # Create seed products and put them in a sqlite database
-products: database.db
-	benthos -c seed/create_products.yaml -e .env
+media:
+	benthos -c seed/create_media.yaml -e .env
 
 # Create seed ratings and put them in a kinesis stream
 ratings:
