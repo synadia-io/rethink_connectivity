@@ -1,6 +1,6 @@
 input:
   generate:
-    mapping: |
+    mapping: |-
       seq = count("messages")
       id = ksuid()
       email = fake("email")
@@ -22,12 +22,5 @@ output:
     max_in_flight: 1
     table: customers
     columns: [id, name, email, phone, timezone, gender]
-    args_mapping: |
-      root = [
-        id,
-        name,
-        email,
-        phone,
-        timezone,
-        gender,
-      ]
+    args_mapping: |-
+      root = [id, name, email, phone, timezone, gender]
