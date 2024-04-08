@@ -1,6 +1,7 @@
 input:
   generate:
     mapping: |
+      seq = count("messages")
       id = ksuid()
       name = fake("name")
       email = fake("email")
