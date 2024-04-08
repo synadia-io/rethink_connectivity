@@ -1,0 +1,5 @@
+input:
+  nats_jetstream:
+    urls: [nats://localhost:4222]
+    subject: ratings
+    durable: demographics

@@ -2,3 +2,41 @@ input:
   generate:
     mapping: |
       id = ksuid()
+      rating = random_int(min: 1, max: 5)
+    interval: 10ms
+
+pipeline:
+  processors:
+    - branch:
+        processors:
+          - sql_raw:
+              driver: "sqlite"
+              dsn: "database.db"
+              query: "SELECT id from customers ORDER BY RANDOM() LIMIT 1;"
+        result_map: "customer_id = this.index(0).id"
+    - branch:
+        processors:
+          # the KV processor is in flux for the keys command, this is
+          # a hack to list all the keys for now.
+          - cached:
+              key: keys
+              cache: keys_cache
+              processors:
+                - command:
+                    name: nats
+                    args_mapping: |-
+                      ["kv", "ls", "media"]
+                - mapping: content().string().split("\n")
+        result_map: "media_id = this.index(random_int() % this.length())"
+
+cache_resources:
+  - label: keys_cache
+    memory:
+      # Disable compaction so that cached items never expire
+      compaction_interval: ""
+
+output:
+  aws_kinesis:
+    stream: ratings
+    region: us-east-1
+    partition_key: 1

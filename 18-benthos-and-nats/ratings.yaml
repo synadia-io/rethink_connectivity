@@ -1,0 +1,11 @@
+input:
+  aws_kinesis:
+    streams: [ratings]
+    region: us-east-1
+    dynamodb:
+      table: "ratingsSeq"
+
+output:
+  nats_jetstream:
+    urls: [nats://localhost:4222]
+    subject: ratings
