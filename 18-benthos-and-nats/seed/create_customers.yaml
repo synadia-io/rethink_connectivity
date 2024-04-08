@@ -1,0 +1,26 @@
+input:
+  generate:
+    mapping: |
+      id = ksuid()
+      name = fake("name")
+      email = fake("email")
+      timezone = fake("timezone")
+      phone = fake("phone_number")
+    interval: ""
+    count: 1000
+
+output:
+  sql_insert:
+    driver: "sqlite"
+    dsn: "database.db"
+    max_in_flight: 1
+    table: customers
+    columns: [id, name, email, phone, timezone]
+    args_mapping: |
+      root = [
+        id,
+        name,
+        email,
+        phone,
+        timezone,
+      ]
