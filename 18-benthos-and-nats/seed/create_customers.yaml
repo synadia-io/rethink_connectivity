@@ -3,10 +3,15 @@ input:
     mapping: |
       seq = count("messages")
       id = ksuid()
-      name = fake("name")
       email = fake("email")
       timezone = fake("timezone")
       phone = fake("phone_number")
+      gender = fake("gender")
+      name = match root.gender {
+        "Male" => fake("first_name_male")
+        "Female" => fake("first_name_female")
+        _ => fake("first_name")
+      } + " " + fake("last_name")
     interval: ""
     count: 1000
 
@@ -16,7 +21,7 @@ output:
     dsn: "database.db"
     max_in_flight: 1
     table: customers
-    columns: [id, name, email, phone, timezone]
+    columns: [id, name, email, phone, timezone, gender]
     args_mapping: |
       root = [
         id,
@@ -24,4 +29,5 @@ output:
         email,
         phone,
         timezone,
+        gender,
       ]
