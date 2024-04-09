@@ -1,5 +1,72 @@
-pipeline:
-  processors:
-    # Gets the latest value of the key, and allows the value to be mapped before re-inserting it
-    - nats_kv_update:
-        urls: [nats://localhost:4222]
+name: nats_kv_update
+type: processor
+status: experimental
+categories: [nats]
+summary: Gets the latest value from a NATS KV bucket, performs a bloblang mapping on it before setting the value. Supports NATS KV's Optimistic Concurrency Control mechanisms to make sure concurrent writers don't unknowingly overwrite each other's changes.
+
+fields:
+  - name: urls
+    type: string
+    kind: list
+  - name: bucket
+    type: string
+  - name: key
+    type: string
+  - name: max_retries
+    type: int
+    default: 5
+  - name: mapping
+    type: string
+
+mapping: |-
+  root.while = {
+    "at_least_once": true,
+    "check": "errored()",
+    "max_loops": this.max_retries,
+    "processors": [
+      {
+        "catch": []
+      },
+      {
+        "nats_kv": {
+          "urls": this.urls,
+          "bucket": this.bucket,
+          "key": this.key,
+          "operation": "get",
+        }
+      },
+      {
+        "mapping": this.mapping
+      },
+      {
+        "switch": [
+          {
+            "check": "@nats_kv_revision != null",
+            "processors": [
+              {
+                "nats_kv": {
+                  "urls": this.urls,
+                  "bucket": this.bucket,
+                  "key": this.key,
+                  "operation": "update",
+                  "revision": "${! @nats_kv_revision }"
+                }
+              },
+            ]
+          },
+          {
+            "processors": [
+              {
+                "nats_kv": {
+                  "urls": this.urls,
+                  "bucket": this.bucket,
+                  "key": this.key,
+                  "operation": "create",
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
