@@ -3,6 +3,7 @@ input:
     mapping: |
       id = ksuid()
       rating = random_int(min: 1, max: 5)
+      ts = now()
     interval: 10ms
 
 pipeline:
@@ -40,3 +41,5 @@ output:
     stream: ratings
     region: us-east-1
     partition_key: 1
+    batching:
+      count: 1000

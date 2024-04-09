@@ -10,12 +10,6 @@ pipeline:
   processors:
     - branch:
         processors:
-          - log:
-              message: "Enriching with IMDB metadata..."
-              fields_mapping: |-
-                root.id = id
-                root.title = title
-                root.imdb_id = imdb_id
           - http:
               url: "http://www.omdbapi.com/?i=${! imdb_id }&apikey=${OMDB_API_KEY}"
         result_map: "omdb_result = this.map_each_key(key -> key.slug())"
