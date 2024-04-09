@@ -11,16 +11,14 @@ pipeline:
         check: errored()
         max_loops: 100
         processors:
+          - catch: [] # wipe any previous error
+
           - nats_kv:
               urls: [nats://localhost:4222]
               bucket: foo
               key: jeremy
               operation: get
-
-          - catch:
-              - log:
-                  level: DEBUG
-                  message: "${!error()}"
+          - catch: []
 
           - mapping: count = (count | 0) + 1
 
