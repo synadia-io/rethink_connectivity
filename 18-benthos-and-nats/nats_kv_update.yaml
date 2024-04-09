@@ -15,7 +15,7 @@ fields:
   - name: max_retries
     type: int
     default: 5
-  - name: mapping
+  - name: mutation
     type: string
 
 mapping: |-
@@ -28,15 +28,29 @@ mapping: |-
         "catch": []
       },
       {
-        "nats_kv": {
-          "urls": this.urls,
-          "bucket": this.bucket,
-          "key": this.key,
-          "operation": "get",
+        "branch": {
+          "request_map": "root = {}",
+          "processors": [
+            {
+              "nats_kv": {
+                "urls": this.urls,
+                "bucket": this.bucket,
+                "key": this.key,
+                "operation": "get",
+              }
+            },
+            {
+              "catch": []
+            }
+          ],
+          "result_map": "meta nats_kv_revision = meta(\"nats_kv_revision\")\nvalue = this"
         }
       },
       {
-        "mapping": this.mapping
+        "mutation": this.mutation
+      },
+      {
+        "mapping": "root = value"
       },
       {
         "switch": [

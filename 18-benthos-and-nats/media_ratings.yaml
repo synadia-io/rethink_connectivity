@@ -17,7 +17,7 @@ pipeline:
               where: id = ?
               args_mapping: |-
                 [customer_id]
-        result_map: customer = this.index(0)
+        result_map: meta customer = this.index(0)
 
     - label: look_up_media
       branch:
@@ -27,50 +27,21 @@ pipeline:
               operation: get
               bucket: media
               key: ${! media_id }
-        result_map: media = this
+          - catch: []
+        result_map: meta media = this
 
-    - mapping: root = if errored() { deleted() }
-
-    - label: get_media_rating
-      branch:
-        processors:
-          # Get the value
-          - nats_kv:
-              urls: [nats://localhost:4222]
-              operation: get
-              bucket: media_ratings
-              key: ${! media_id }
-          # if we don't have it, create the object
-          - catch:
-              - mapping: |-
-                  id = media_id
-                  title = media.title
-                  poster = media.omdb_result.poster
-                  avg_rating = 0
-                  count = 0
-              - nats_kv:
-                  urls: [nats://localhost:4222]
-                  operation: create
-                  bucket: media_ratings
-                  key: ${! id }
-        result_map: |-
-          meta = meta()
-          media_rating = this
-
-    - label: calculate_media_rating
-      mapping: |-
-        root = this
-        media_rating.avg_rating = (( media_rating.count * media_rating.avg_rating ) + rating) / (media_rating.count + 1)
-        media_rating.count = media_rating.count + 1
-        root = root.media_rating
-
-    - label: save_media_rating
-      nats_kv:
+    - label: update_media_rating
+      nats_kv_update:
         urls: [nats://localhost:4222]
-        operation: "update"
         bucket: media_ratings
-        key: ${! id }
-        revision: ${! @nats_kv_revision }
+        key: ${! @media.id }
+        mutation: |
+          value.title = @media.title
+          value.poster = @media.omdb_result.poster
+          value.avg = value.avg|0
+          value.count = value.count|0
+          value.avg = ((value.count * value.avg) + rating|0) / (value.count + 1)
+          value.count = value.count + 1
 
 output:
   switch:
