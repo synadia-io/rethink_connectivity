@@ -1,0 +1,19 @@
+input:
+  nats_jetstream:
+    urls: [nats://localhost:4222]
+    subject: ratings
+    max_ack_pending: 11000
+
+output:
+  aws_s3:
+    bucket: codegangsta-backups
+    region: us-east-1
+    path: backup-${!timestamp_unix_nano()}.tar.gz
+    batching:
+      count: 10000
+      period: 10s
+      processors:
+        - archive:
+            format: tar
+        - compress:
+            algorithm: gzip

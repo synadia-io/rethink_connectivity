@@ -1,0 +1,9 @@
+input:
+  aws_s3:
+    bucket: codegangsta-backups
+    region: us-east-1
+    scanner:
+      decompress:
+        algorithm: gzip
+        into:
+          tar: {}
