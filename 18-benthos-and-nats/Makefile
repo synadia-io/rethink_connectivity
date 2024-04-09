@@ -10,6 +10,13 @@ media:
 ratings:
 	benthos -c seed/create_ratings.yaml -e .env
 
+# Create seed views and put them in a kinesis stream
+views:
+	benthos -c seed/create_views.yaml -e .env
+
+analytics:
+	benthos -c analytics.yaml -e .env
+
 database.db:
 	sqlite3 database.db < db/schema.sql
 

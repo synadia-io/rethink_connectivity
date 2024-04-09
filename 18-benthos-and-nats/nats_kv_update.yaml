@@ -1,0 +1,5 @@
+pipeline:
+  processors:
+    # Gets the latest value of the key, and allows the value to be mapped before re-inserting it
+    - nats_kv_update:
+        urls: [nats://localhost:4222]

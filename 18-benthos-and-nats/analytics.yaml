@@ -1,0 +1,33 @@
+input:
+  nats_jetstream:
+    urls: [nats://localhost:4222]
+    subject: views.*
+    max_ack_pending: 1000000
+
+buffer:
+  system_window:
+    timestamp_mapping: now()
+    size: 3s
+
+pipeline:
+  processors:
+    - group_by_value:
+        value: ${! json("mid") }
+
+    - mapping: |-
+        let is_first_message = batch_index() == 0
+
+        root.media_id = this.mid
+        root.created_at = @window_end_timestamp
+        root.views = if $is_first_message {
+          json("cid").from_all().length()
+        }
+        root.unique_views = if $is_first_message {
+          json("cid").from_all().unique().length()
+        }
+        root.total_watch_time = if $is_first_message {
+          json("wts").from_all().unique().sum()
+        }
+        root = if ! $is_first_message {
+          deleted()
+        }

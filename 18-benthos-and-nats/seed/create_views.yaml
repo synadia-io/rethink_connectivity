@@ -1,0 +1,46 @@
+input:
+  generate:
+    mapping: |
+      id = ksuid()
+      wts = random_int(min: 1, max: 1200)
+      ts = now()
+    interval: ""
+
+pipeline:
+  processors:
+    - branch:
+        processors:
+          - cached:
+              key: customers
+              cache: keys_cache
+              processors:
+                - sql_raw:
+                    driver: "sqlite"
+                    dsn: "database.db"
+                    query: "SELECT id from customers;"
+        result_map: "cid = this.index(random_int() % this.length()).id"
+    - branch:
+        processors:
+          # the KV processor is in flux for the keys command, this is
+          # a hack to list all the keys for now.
+          - cached:
+              key: keys
+              cache: keys_cache
+              processors:
+                - command:
+                    name: nats
+                    args_mapping: |-
+                      ["kv", "ls", "media"]
+                - mapping: content().string().split("\n").slice(0,100)
+        result_map: "mid = this.index(random_int() % this.length())"
+
+cache_resources:
+  - label: keys_cache
+    memory:
+      # Disable compaction so that cached items never expire
+      compaction_interval: ""
+
+output:
+  nats_jetstream:
+    urls: [nats://localhost:4222]
+    subject: views.${! mid }
