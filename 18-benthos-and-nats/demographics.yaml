@@ -4,6 +4,7 @@ input:
     subject: ratings
 
 pipeline:
+  threads: 12
   processors:
     - label: look_up_customer
       branch:
@@ -28,6 +29,8 @@ pipeline:
               key: ${! media_id }
         result_map: media = this
 
+    - mapping: root = if errored() { deleted() }
+
     - label: get_media_rating
       branch:
         processors:
@@ -47,7 +50,7 @@ pipeline:
                   count = 0
               - nats_kv:
                   urls: [nats://localhost:4222]
-                  operation: "create"
+                  operation: create
                   bucket: media_ratings
                   key: ${! id }
         result_map: |-
