@@ -1,7 +1,7 @@
-import { Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { Show, createMemo, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import ChannelView from "./channel-view"
-import { JSONCodec, StringCodec, connect, millis, type Consumer, type ConsumerMessages, type JsMsg, type NatsConnection } from "nats.ws";
+import { StringCodec, connect, millis, type Consumer, type JsMsg, type NatsConnection } from "nats.ws";
 import { createStore } from "solid-js/store";
 import type { Message, Channel, UserID, User } from "../types";
 import Login from "./login";
