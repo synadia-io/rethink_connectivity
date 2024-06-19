@@ -107,7 +107,7 @@ func (a *AuthService) Handle(r micro.Request) {
 	userNkey := rc.UserNkey
 	serverId := rc.Server.ID
 	claims := jwt.NewUserClaims(rc.UserNkey)
-	claims.Audience = "$G" // use $G as the account as we are not using any accounts here
+	claims.Audience = "CHAT"
 
 	// this gives me a backdoor with the CLI. Don't do this in production!
 	if rc.ConnectOptions.Username == "cli" && rc.ConnectOptions.Password == "my-password" {
@@ -224,6 +224,5 @@ func (a *AuthService) AssignPermissions(gclaims *GoogleClaims, uc *jwt.UserClaim
 				"$JS.API.CONSUMER.CREATE.KV_chat_workspace.*.>", // Creating consumers/watchers on workspace KV
 			},
 		},
-		// Sub:  jwt.Permission{},
 	}
 }
