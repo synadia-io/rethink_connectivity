@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -11,9 +12,17 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/nats-io/jwt/v2"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-io/nats.go/micro"
 	"github.com/nats-io/nkeys"
 )
+
+type WorkspaceUser struct {
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	PhotoURL string `json:"photoURL"`
+}
 
 type GoogleClaims struct {
 	Name          string `json:"name"`
@@ -26,6 +35,7 @@ type AuthService struct {
 	issuerKeyPair nkeys.KeyPair
 	verifier      *oidc.IDTokenVerifier
 	clientID      string
+	workspace     jetstream.KeyValue
 
 	username string
 	password string
@@ -54,7 +64,19 @@ func (a *AuthService) Run(ctx context.Context) error {
 		return err
 	}
 
-	// Add Service
+	// get the workspace kv
+	js, err := jetstream.New(nc)
+	if err != nil {
+		return err
+	}
+
+	kv, err := js.KeyValue(ctx, "chat_workspace")
+	if err != nil {
+		return err
+	}
+	a.workspace = kv
+
+	// Add our Auth Service
 	_, err = micro.AddService(nc, micro.Config{
 		Name:        "auth",
 		Version:     "0.0.1",
@@ -85,7 +107,7 @@ func (a *AuthService) Handle(r micro.Request) {
 	userNkey := rc.UserNkey
 	serverId := rc.Server.ID
 	claims := jwt.NewUserClaims(rc.UserNkey)
-	claims.Audience = "$G"
+	claims.Audience = "$G" // use $G as the account as we are not using any accounts here
 
 	// this gives me a backdoor with the CLI. Don't do this in production!
 	if rc.ConnectOptions.Username == "cli" && rc.ConnectOptions.Password == "my-password" {
@@ -100,10 +122,18 @@ func (a *AuthService) Handle(r micro.Request) {
 		googleJWT := rc.ConnectOptions.Token
 		gclaims, err := a.VerifyGoogleJWT(context.Background(), googleJWT)
 		if err != nil {
+			log.Println("error", err)
 			a.Respond(r, userNkey, serverId, "", err)
 		}
 
 		log.Printf("google claims: %+v", gclaims)
+
+		// Add user to workspace kv
+		err = a.AddUserToWorkspace(gclaims)
+		if err != nil {
+			log.Println("error", err)
+			a.Respond(r, userNkey, serverId, "", err)
+		}
 
 		// Assign JWT permissions based off the
 		a.AssignPermissions(gclaims, claims)
@@ -154,6 +184,23 @@ func (a *AuthService) VerifyGoogleJWT(ctx context.Context, token string) (*Googl
 	}
 
 	return claims, nil
+}
+
+func (a *AuthService) AddUserToWorkspace(gclaims *GoogleClaims) error {
+	user := WorkspaceUser{
+		Id:       base64.StdEncoding.EncodeToString([]byte(gclaims.Email)),
+		Name:     gclaims.Name,
+		Email:    gclaims.Email,
+		PhotoURL: gclaims.Picture,
+	}
+
+	data, err := json.Marshal(user)
+	if err != nil {
+		return err
+	}
+
+	_, err = a.workspace.Put(context.Background(), fmt.Sprintf("users.%s", user.Id), data)
+	return err
 }
 
 func (a *AuthService) AssignPermissions(gclaims *GoogleClaims, uc *jwt.UserClaims) {
