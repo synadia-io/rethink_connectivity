@@ -9,6 +9,8 @@ import Chat from "../components/chat";
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Astro</title>
+    <script is:inline src="https://accounts.google.com/gsi/client" async
+    ></script>
   </head>
   <body class="bg-zinc-900 text-zinc-100">
     <Chat client:only />

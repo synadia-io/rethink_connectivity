@@ -167,7 +167,7 @@ export default function Chat() {
   }
 
   return (
-    <Show when={store.user} fallback={<Login onSubmit={onLogin} />}>
+    <Show when={store.user} fallback={<Login onSubmit={onLogin} useSSO />}>
       <div class="inset-0 w-full h-lvh absolute flex flex-row">
         <Sidebar channels={channels} selected={store.channel} onSelect={(c) => setStore("channel", c)} />
         <ChannelView channel={store.channel} onSend={sendMessage} messages={channelMessages()} />
