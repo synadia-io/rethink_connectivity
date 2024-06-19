@@ -1,7 +1,7 @@
 import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import Channel from "./channel";
-import { StringCodec, connect, type NatsConnection } from "nats.ws";
+import { StringCodec, connect, type ConsumerMessages, type NatsConnection } from "nats.ws";
 
 interface Message {
   userId: string
@@ -21,6 +21,7 @@ export default function Chat() {
   const [userId, setUserId] = createSignal("foobar")
   const [selected, setSelected] = createSignal("general")
   const [conn, setConn] = createSignal<NatsConnection>()
+  const [sub, setSub] = createSignal<ConsumerMessages>()
 
   onMount(() => {
     (async () => {
@@ -41,6 +42,7 @@ export default function Chat() {
 
   onCleanup(() => {
     console.log("closing connection...")
+    sub()?.stop()
     conn()?.close()
   })
 
