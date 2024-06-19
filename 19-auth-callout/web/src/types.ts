@@ -14,7 +14,9 @@ export interface User {
 }
 
 export interface Message {
-  user: User
+  userID: UserID
   text: string
   timestamp: Date
 }
+
+export type MessageWithUser = Message & { user: User }

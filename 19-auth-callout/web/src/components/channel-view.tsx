@@ -1,10 +1,10 @@
 import { SendHorizontalIcon } from "lucide-solid"
 import { createSignal } from "solid-js"
-import type { Message } from "../types"
+import type { MessageWithUser } from "../types"
 
 interface Props {
   channel: string
-  messages: Message[]
+  messages: MessageWithUser[]
   onSend: (channel: string, message: string) => void
 }
 

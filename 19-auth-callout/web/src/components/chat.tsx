@@ -1,7 +1,7 @@
 import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import ChannelView from "./channel-view"
-import { StringCodec, connect, type Consumer, type ConsumerMessages, type NatsConnection } from "nats.ws";
+import { StringCodec, connect, millis, type Consumer, type ConsumerMessages, type JsMsg, type NatsConnection } from "nats.ws";
 import { createStore } from "solid-js/store";
 import type { Message, Channel, UserID, User } from "../types";
 
@@ -30,6 +30,8 @@ interface ChatStore {
   users: Record<UserID, User>
 }
 
+const sc = StringCodec()
+
 const channels = ["general", "random", "dev"]
 
 export default function Chat() {
@@ -40,6 +42,31 @@ export default function Chat() {
     messages: {},
     users: {}
   })
+
+  const onMessageReceived = (m: JsMsg) => {
+    const [_, channel, userID] = m.subject.split(".")
+
+    const msg: Message = {
+      userID: userID,
+      text: m.string(),
+      timestamp: new Date(millis(m.info.timestampNanos))
+    }
+    setStore("messages", channel, (prev) => prev ? [...prev, msg] : [msg])
+  }
+
+  const channelMessages = () => {
+    return (store.messages[selected()] || []).map((m) => {
+      return {
+        ...m,
+        user: {
+          id: m.userID,
+          name: "Jeremy",
+          email: "jeremy@synadia.com",
+          photoURL: "https://avatars.githubusercontent.com/u/178316?v=4"
+        }
+      }
+    })
+  }
 
   onMount(() => {
     (async () => {
@@ -55,7 +82,7 @@ export default function Chat() {
 
       const sub = await consumer.consume()
       for await (const m of sub) {
-        console.log(m)
+        onMessageReceived(m)
       }
     })()
   })
@@ -68,15 +95,13 @@ export default function Chat() {
 
   const sendMessage = (channel: string, message: string) => {
     console.log("sending message", channel, message)
-    const sc = StringCodec()
     store.conn?.publish(`chat.${channel}.${store.userID}`, sc.encode(message))
   }
 
   return (
     <div class="inset-0 w-full h-lvh absolute flex flex-row">
       <Sidebar channels={channels} selected={selected()} onSelect={setSelected} />
-      <ChannelView channel={selected()} onSend={sendMessage} messages={[
-      ]} />
+      <ChannelView channel={selected()} onSend={sendMessage} messages={channelMessages()} />
     </div>
   );
 }
