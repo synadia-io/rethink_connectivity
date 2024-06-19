@@ -17,6 +17,10 @@ export default function ChannelView(props: Props) {
     setMessage("")
   }
 
+  const formatDate = (d: Date) => {
+    return d.toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" })
+  }
+
   return (
     <div class="w-full h-full flex flex-col">
       <div class="p-4 border-b border-zinc-800">
@@ -28,7 +32,10 @@ export default function ChannelView(props: Props) {
           <div class="flex flex-row gap-2">
             <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
             <div class="flex flex-col">
-              <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
+              <div class="flex flex-row gap-2 items-center">
+                <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
+                <span class="text-zinc-400 text-xs mt-0.5">{formatDate(msg.timestamp)}</span>
+              </div>
               <span class="text-zinc-300">{msg.text}</span>
             </div>
           </div>
@@ -38,6 +45,7 @@ export default function ChannelView(props: Props) {
       <div class="p-4">
         <form onSubmit={onSubmit} class="flex flex-row w-full items-center justify-center p-4 bg-zinc-800 border border-zinc-700 rounded-lg">
           <input
+            autofocus
             value={message()}
             onInput={(e) => setMessage(e.target.value)}
             class="flex-grow bg-transparent text-zinc-100 placeholder-zinc-400 focus:outline-none"
