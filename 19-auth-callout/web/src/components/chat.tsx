@@ -1,7 +1,7 @@
 import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import ChannelView from "./channel-view"
-import { StringCodec, connect, millis, type Consumer, type ConsumerMessages, type JsMsg, type NatsConnection } from "nats.ws";
+import { JSONCodec, StringCodec, connect, millis, type Consumer, type ConsumerMessages, type JsMsg, type NatsConnection } from "nats.ws";
 import { createStore } from "solid-js/store";
 import type { Message, Channel, UserID, User } from "../types";
 
@@ -68,9 +68,41 @@ export default function Chat() {
     })
   }
 
+  // Watches information about the workspace, like users
+  // returns a promise that is resolved when the workspace
+  // Info is caught up, but still runs in the background
+  // for updates
+  const watchWorkspace = async () => {
+    return new Promise(async (res, rej) => {
+      const conn = store.conn
+      if (!conn) {
+        return
+      }
+
+      const js = conn.jetstream()
+      const workspace = await js.views.kv("chat_workspace")
+      const watcher = await workspace.watch({
+        initializedFn: () => res(null)
+      })
+
+      for await (const entry of watcher) {
+        const [resource, ...rest] = entry.key.split(".")
+
+        switch (resource) {
+          case "users":
+            // Parse and add user to the users lookup table
+            const id = rest[0]
+            setStore("users", id, entry.json())
+            console.log("setting user", entry.json())
+            break;
+        }
+      }
+    })
+
+  }
+
   onMount(() => {
     (async () => {
-      console.log("connecting...")
       const conn = await connect({
         servers: ["ws://localhost:8222"],
       })
@@ -79,6 +111,8 @@ export default function Chat() {
       const js = conn.jetstream()
       const consumer = await js.consumers.get("chat_messages")
       setStore("consumer", consumer)
+
+      await watchWorkspace()
 
       const sub = await consumer.consume()
       for await (const m of sub) {
