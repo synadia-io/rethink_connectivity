@@ -1,5 +1,5 @@
 import { SendHorizontalIcon } from "lucide-solid"
-import { Show, createSignal } from "solid-js"
+import { Show, createSignal, onMount } from "solid-js"
 import type { MessageWithUser } from "../types"
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 
 export default function ChannelView(props: Props) {
   const [message, setMessage] = createSignal("")
+  let input: HTMLInputElement
 
   const onSubmit = (e: Event) => {
     e.preventDefault()
@@ -20,6 +21,8 @@ export default function ChannelView(props: Props) {
   const formatDate = (d: Date) => {
     return d.toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" })
   }
+
+  onMount(() => input.focus())
 
   return (
     <div class="w-full h-full flex flex-col">
@@ -50,7 +53,7 @@ export default function ChannelView(props: Props) {
       <div class="p-4">
         <form onSubmit={onSubmit} class="flex flex-row w-full items-center justify-center p-4 bg-zinc-800 border border-zinc-700 rounded-lg">
           <input
-            autofocus
+            ref={input}
             value={message()}
             onInput={(e) => setMessage(e.target.value)}
             class="flex-grow bg-transparent text-zinc-100 placeholder-zinc-400 focus:outline-none"
