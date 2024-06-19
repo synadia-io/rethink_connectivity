@@ -2,7 +2,7 @@ import { Show, createEffect, createSignal, onMount } from "solid-js"
 import { parseJWT } from "../util/jwt"
 
 interface Props {
-  onSubmit: (email: string) => void
+  onSubmit: (email: string, token: string) => void
   useSSO?: boolean
 }
 
@@ -19,7 +19,7 @@ export default function Login(props: Props) {
     }
 
     setEmail("")
-    props.onSubmit(emailAddress)
+    props.onSubmit(emailAddress, "")
   }
 
   onMount(() => {
@@ -30,7 +30,8 @@ export default function Login(props: Props) {
         callback: (res: any) => {
           if (res.credential) {
             const claims = parseJWT(res.credential)
-            props.onSubmit(claims.email)
+            console.log("claims", claims)
+            props.onSubmit(claims.email, res.credential)
           }
         }
       })

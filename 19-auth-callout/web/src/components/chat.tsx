@@ -1,7 +1,7 @@
 import { Show, createMemo, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import ChannelView from "./channel-view"
-import { StringCodec, connect, millis, type Consumer, type JsMsg, type NatsConnection } from "nats.ws";
+import { StringCodec, connect, millis, tokenAuthenticator, type Consumer, type JsMsg, type NatsConnection } from "nats.ws";
 import { createStore } from "solid-js/store";
 import type { Message, Channel, UserID, User } from "../types";
 import Login from "./login";
@@ -56,12 +56,11 @@ export default function Chat() {
     return await js.views.kv("chat_workspace")
   })
 
-  const onLogin = async (email: string) => {
+  const onLogin = async (email: string, token: string) => {
     const b64Email = btoa(email)
-
     const conn = await connect({
       servers: ["ws://localhost:8222"],
-      name: email,
+      authenticator: tokenAuthenticator(token)
     })
     setStore("conn", conn)
 

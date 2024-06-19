@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"log"
 	"runtime"
 
@@ -26,6 +26,11 @@ func main() {
 }
 
 func RunAuthService() error {
+	err := InitGoogleOIDC(context.Background())
+	if err != nil {
+		return err
+	}
+
 	nc, err := nats.Connect(nats.DefaultURL, nats.UserInfo("auth", "auth"))
 	if err != nil {
 		return err
@@ -49,16 +54,17 @@ func RunAuthService() error {
 		return err
 	}
 
+	log.Println("listening on $SYS.REQ.USER.AUTH")
 	runtime.Goexit()
 	return nil
 }
 
 func AuthHandler(r micro.Request) {
-	fmt.Println("Received Request")
+	log.Println("Received Request")
 
 	rc, err := jwt.DecodeAuthorizationRequestClaims(string(r.Data()))
 	if err != nil {
-		fmt.Println("Error", err)
+		log.Println("Error", err)
 		r.Error("500", err.Error(), nil)
 	}
 
@@ -75,6 +81,15 @@ func AuthHandler(r micro.Request) {
 		token, err := ValidateAndSign(claims, issuerKeypair)
 		Respond(r, userNkey, serverId, token, err)
 		return
+	} else {
+		// Try to get a google JWT from the token field
+		googleJWT := rc.ConnectOptions.Token
+		gclaims, err := VerifyGoogleJWT(context.Background(), googleJWT)
+		if err != nil {
+			Respond(r, userNkey, serverId, "", err)
+		}
+
+		log.Printf("google claims: %+v", gclaims)
 	}
 }
 
