@@ -19,6 +19,9 @@ interface ChatStore {
   // down the subjects that this user is able to publish to
   userID?: string
 
+  // Currently selected channel
+  channel: Channel
+
   // Messages for various channels, for now we will just get
   // all messages from the beginning of time, but with NATS
   // it's quite easy to fetch from a particular time 
@@ -32,12 +35,12 @@ interface ChatStore {
 
 const sc = StringCodec()
 
+// TODO: These should be looked up by the workspace KV
 const channels = ["general", "random", "dev"]
 
 export default function Chat() {
-  const [selected, setSelected] = createSignal("general")
-
   const [store, setStore] = createStore<ChatStore>({
+    channel: "general",
     userID: "amVyZW15QHN5bmFkaWEuY29t",
     messages: {},
     users: {}
@@ -120,7 +123,7 @@ export default function Chat() {
   }
 
   const channelMessages = () => {
-    return (store.messages[selected()] || []).map((m) => {
+    return (store.messages[store.channel] || []).map((m) => {
       return {
         ...m,
         user: store.users[m.userID] ?? {
@@ -134,8 +137,8 @@ export default function Chat() {
 
   return (
     <div class="inset-0 w-full h-lvh absolute flex flex-row">
-      <Sidebar channels={channels} selected={selected()} onSelect={setSelected} />
-      <ChannelView channel={selected()} onSend={sendMessage} messages={channelMessages()} />
+      <Sidebar channels={channels} selected={store.channel} onSelect={(c) => setStore("channel", c)} />
+      <ChannelView channel={store.channel} onSend={sendMessage} messages={channelMessages()} />
     </div>
   );
 }
