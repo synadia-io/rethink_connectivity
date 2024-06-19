@@ -16,10 +16,10 @@ export default function Sidebar(props: Props) {
         <For each={props.channels}>
           {(channel) => (
             <li onClick={() => props.onSelect(channel)} class={cn(
-              "rounded-lg hover:bg-zinc-800 px-2 py-1 -mx-2",
-              props.selected === channel && "bg-purple-800 hover:bg-purple-800"
+              "rounded-lg px-2 py-1 -mx-2 cursor-pointer",
+              props.selected === channel ? "bg-purple-800 hover:bg-purple-800" : "hover:bg-zinc-800"
             )
-            }>#{channel}</li>
+            }># {channel}</li>
           )}
         </For>
       </ul>

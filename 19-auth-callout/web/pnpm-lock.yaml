@@ -20,6 +20,12 @@ importers:
       astro:
         specifier: ^4.10.3
         version: 4.10.3(typescript@5.4.5)
+      lucide-solid:
+        specifier: ^0.395.0
+        version: 0.395.0(solid-js@1.8.17)
+      nats.ws:
+        specifier: ^1.27.0
+        version: 1.27.0
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
@@ -1302,6 +1308,11 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  lucide-solid@0.395.0:
+    resolution: {integrity: sha512-nLJfgLiAxzTaw1eZG+ayrFz4wqcqwpo1ZokYxigawj7uTWnraOCti8SOVDLE+JYmKObmvGOqTztVTV6LeGy8mw==}
+    peerDependencies:
+      solid-js: ^1.4.7
+
   magic-string@0.30.10:
     resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
 
@@ -1479,6 +1490,13 @@ packages:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  nats.ws@1.27.0:
+    resolution: {integrity: sha512-8YPhet5qmclQUwZB+VAvb0C3Q399/MYahxvN3GZU2XnYRkGeOJuvgii5ICLV3z6HDQkL7qkwMIdeUyQgu+wt4Q==}
+
+  nkeys.js@1.1.0:
+    resolution: {integrity: sha512-tB/a0shZL5UZWSwsoeyqfTszONTt4k2YS0tuQioMOD180+MbombYVgzDUYHlx+gejYK6rgf08n/2Df99WY0Sxg==}
+    engines: {node: '>=10.0.0'}
 
   nlcst-to-string@3.1.1:
     resolution: {integrity: sha512-63mVyqaqt0cmn2VcI2aH6kxe1rLAmSROqHMA0i4qqg1tidkfExgpb0FGMikMCn86mw5dFtBtEANfmSSK7TjNHw==}
@@ -1917,6 +1935,9 @@ packages:
 
   tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
+
+  tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
   type-fest@2.19.0:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
@@ -3542,6 +3563,10 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  lucide-solid@0.395.0(solid-js@1.8.17):
+    dependencies:
+      solid-js: 1.8.17
+
   magic-string@0.30.10:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -3894,6 +3919,15 @@ snapshots:
       thenify-all: 1.6.0
 
   nanoid@3.3.7: {}
+
+  nats.ws@1.27.0:
+    optionalDependencies:
+      nkeys.js: 1.1.0
+
+  nkeys.js@1.1.0:
+    dependencies:
+      tweetnacl: 1.0.3
+    optional: true
 
   nlcst-to-string@3.1.1:
     dependencies:
@@ -4410,6 +4444,9 @@ snapshots:
       typescript: 5.4.5
 
   tslib@2.6.3:
+    optional: true
+
+  tweetnacl@1.0.3:
     optional: true
 
   type-fest@2.19.0: {}
