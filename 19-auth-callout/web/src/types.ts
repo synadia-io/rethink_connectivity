@@ -10,7 +10,7 @@ export interface User {
   id: string
   name: string
   email: string
-  photoURL: string
+  photoURL?: string
 }
 
 export interface Message {

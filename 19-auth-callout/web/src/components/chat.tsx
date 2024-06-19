@@ -38,7 +38,7 @@ export default function Chat() {
   const [selected, setSelected] = createSignal("general")
 
   const [store, setStore] = createStore<ChatStore>({
-    userID: "foobar",
+    userID: "amVyZW15QHN5bmFkaWEuY29t",
     messages: {},
     users: {}
   })
@@ -54,19 +54,6 @@ export default function Chat() {
     setStore("messages", channel, (prev) => prev ? [...prev, msg] : [msg])
   }
 
-  const channelMessages = () => {
-    return (store.messages[selected()] || []).map((m) => {
-      return {
-        ...m,
-        user: {
-          id: m.userID,
-          name: "Jeremy",
-          email: "jeremy@synadia.com",
-          photoURL: "https://avatars.githubusercontent.com/u/178316?v=4"
-        }
-      }
-    })
-  }
 
   // Watches information about the workspace, like users
   // returns a promise that is resolved when the workspace
@@ -130,6 +117,19 @@ export default function Chat() {
   const sendMessage = (channel: string, message: string) => {
     console.log("sending message", channel, message)
     store.conn?.publish(`chat.${channel}.${store.userID}`, sc.encode(message))
+  }
+
+  const channelMessages = () => {
+    return (store.messages[selected()] || []).map((m) => {
+      return {
+        ...m,
+        user: store.users[m.userID] ?? {
+          id: "unknown",
+          name: "Unknown",
+          email: "Unknown",
+        }
+      }
+    })
   }
 
   return (

@@ -1,5 +1,5 @@
 import { SendHorizontalIcon } from "lucide-solid"
-import { createSignal } from "solid-js"
+import { Show, createSignal } from "solid-js"
 import type { MessageWithUser } from "../types"
 
 interface Props {
@@ -30,7 +30,12 @@ export default function ChannelView(props: Props) {
       <div class="flex-grow flex flex-col justify-end p-6 gap-4">
         {props.messages.map((msg) => (
           <div class="flex flex-row gap-2">
-            <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
+            <Show when={msg.user.photoURL}>
+              <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
+            </Show>
+            <Show when={!msg.user.photoURL}>
+              <div class="w-10 h-10 mt-1 rounded bg-zinc-800" />
+            </Show>
             <div class="flex flex-col">
               <div class="flex flex-row gap-2 items-center">
                 <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
