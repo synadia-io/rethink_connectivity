@@ -30,7 +30,6 @@ func RunAuthService() error {
 	if err != nil {
 		return err
 	}
-	defer nc.Drain()
 
 	issuerKeypair, err = nkeys.FromSeed([]byte(NKeySeed))
 	if err != nil {
@@ -68,24 +67,24 @@ func AuthHandler(r micro.Request) {
 	claims := jwt.NewUserClaims(rc.UserNkey)
 
 	// this gives me a backdoor with the CLI. Don't do this in production!
-	if rc.ConnectOptions.Username == "user" && rc.ConnectOptions.Password == "my-password" {
+	if rc.ConnectOptions.Username == "cli" && rc.ConnectOptions.Password == "my-password" {
 		claims.Name = rc.ConnectOptions.Username
-		// uc.Audience =
+		claims.Audience = "$G"
 		claims.Permissions = jwt.Permissions{}
 
 		token, err := ValidateAndSign(claims, issuerKeypair)
-		Respond(r, userNkey, serverId, token, err.Error())
+		Respond(r, userNkey, serverId, token, err)
 		return
 	}
-
-	r.Error("500", "Not implemented", nil)
 }
 
-func Respond(req micro.Request, userNKey, serverId, userJWT, errMsg string) {
+func Respond(req micro.Request, userNKey, serverId, userJWT string, err error) {
 	rc := jwt.NewAuthorizationResponseClaims(userNKey)
 	rc.Audience = serverId
-	rc.Error = errMsg
 	rc.Jwt = userJWT
+	if err != nil {
+		rc.Error = err.Error()
+	}
 
 	token, err := rc.Encode(issuerKeypair)
 	if err != nil {
