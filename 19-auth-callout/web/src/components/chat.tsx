@@ -1,27 +1,45 @@
 import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
-import Channel from "./channel";
-import { StringCodec, connect, type ConsumerMessages, type NatsConnection } from "nats.ws";
+import ChannelView from "./channel-view"
+import { StringCodec, connect, type Consumer, type ConsumerMessages, type NatsConnection } from "nats.ws";
+import { createStore } from "solid-js/store";
+import type { Message, Channel, UserID, User } from "../types";
 
-interface Message {
-  userId: string
-  message: string
-  timestamp: Date
-}
-
-type Channel = string
-
+// represents the overall state of our
+// chat application, while also allowing for
+// efficient updates/appends, which is what
+// we need for things like messages
 interface ChatStore {
-  messages: Record<Channel, Message>
+  // NATS related fields
+  conn?: NatsConnection
+  consumer?: Consumer
+
+  // Represents the ID of the user for publishing messages
+  // to various channels. For security, we will want to lock
+  // down the subjects that this user is able to publish to
+  userID?: string
+
+  // Messages for various channels, for now we will just get
+  // all messages from the beginning of time, but with NATS
+  // it's quite easy to fetch from a particular time 
+  // (7 days back), for instance
+  messages: Record<Channel, Message[]>
+
+  // Lookup table of user in this workspace. These user profiles will be supplied
+  // by a NATS KV store
+  users: Record<UserID, User>
 }
 
 const channels = ["general", "random", "dev"]
 
 export default function Chat() {
-  const [userId, setUserId] = createSignal("foobar")
   const [selected, setSelected] = createSignal("general")
-  const [conn, setConn] = createSignal<NatsConnection>()
-  const [sub, setSub] = createSignal<ConsumerMessages>()
+
+  const [store, setStore] = createStore<ChatStore>({
+    userID: "foobar",
+    messages: {},
+    users: {}
+  })
 
   onMount(() => {
     (async () => {
@@ -29,10 +47,12 @@ export default function Chat() {
       const conn = await connect({
         servers: ["ws://localhost:8222"],
       })
-      setConn(conn)
+      setStore("conn", conn)
 
       const js = conn.jetstream()
       const consumer = await js.consumers.get("chat_messages")
+      setStore("consumer", consumer)
+
       const sub = await consumer.consume()
       for await (const m of sub) {
         console.log(m)
@@ -40,22 +60,22 @@ export default function Chat() {
     })()
   })
 
-  onCleanup(() => {
+  onCleanup(async () => {
     console.log("closing connection...")
-    sub()?.stop()
-    conn()?.close()
+    await store.consumer?.delete()
+    await store.conn?.close()
   })
 
   const sendMessage = (channel: string, message: string) => {
     console.log("sending message", channel, message)
     const sc = StringCodec()
-    conn()?.publish(`chat.${channel}.${userId()}`, sc.encode(message))
+    store.conn?.publish(`chat.${channel}.${store.userID}`, sc.encode(message))
   }
 
   return (
     <div class="inset-0 w-full h-lvh absolute flex flex-row">
       <Sidebar channels={channels} selected={selected()} onSelect={setSelected} />
-      <Channel channel={selected()} onSend={sendMessage} messages={[
+      <ChannelView channel={selected()} onSend={sendMessage} messages={[
       ]} />
     </div>
   );

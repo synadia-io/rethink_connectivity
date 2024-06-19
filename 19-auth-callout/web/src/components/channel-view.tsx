@@ -1,17 +1,6 @@
 import { SendHorizontalIcon } from "lucide-solid"
 import { createSignal } from "solid-js"
-
-interface Message {
-  user: User
-  message: string
-}
-
-interface User {
-  id: string
-  name: string
-  email: string
-  photoURL: string
-}
+import type { Message } from "../types"
 
 interface Props {
   channel: string
@@ -19,7 +8,7 @@ interface Props {
   onSend: (channel: string, message: string) => void
 }
 
-export default function Channel(props: Props) {
+export default function ChannelView(props: Props) {
   const [message, setMessage] = createSignal("")
 
   const onSubmit = (e: Event) => {
@@ -40,7 +29,7 @@ export default function Channel(props: Props) {
             <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
             <div class="flex flex-col">
               <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
-              <span class="text-zinc-300">{msg.message}</span>
+              <span class="text-zinc-300">{msg.text}</span>
             </div>
           </div>
         ))}
