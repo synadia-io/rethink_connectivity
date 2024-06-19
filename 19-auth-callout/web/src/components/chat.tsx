@@ -59,6 +59,16 @@ export default function Chat() {
   const onLogin = async (email: string) => {
     const b64Email = btoa(email)
 
+    const conn = await connect({
+      servers: ["ws://localhost:8222"],
+      name: email,
+    })
+    setStore("conn", conn)
+
+    const js = conn.jetstream()
+    const consumer = await js.consumers.get("chat_messages")
+    setStore("consumer", consumer)
+
     // Look up the user in the kv store
     const ws = await workspace()
     const entry = await ws?.get(`users.${b64Email}`)
@@ -72,6 +82,13 @@ export default function Chat() {
       ...entry.json(),
       id: b64Email
     })
+
+    await watchWorkspace()
+
+    const sub = await consumer.consume()
+    for await (const m of sub) {
+      onMessageReceived(m)
+    }
   }
 
   const onMessageReceived = (m: JsMsg) => {
@@ -91,13 +108,12 @@ export default function Chat() {
   // info is caught up, but still runs in the background
   // for updates
   const watchWorkspace = async () => {
-    return new Promise(async (res, rej) => {
+    return new Promise(async (res) => {
       const conn = store.conn
       if (!conn) {
         return
       }
 
-      const js = conn.jetstream()
       const ws = await workspace()
       if (ws) {
         const watcher = await ws.watch({
@@ -119,26 +135,6 @@ export default function Chat() {
     })
 
   }
-
-  onMount(() => {
-    (async () => {
-      const conn = await connect({
-        servers: ["ws://localhost:8222"],
-      })
-      setStore("conn", conn)
-
-      const js = conn.jetstream()
-      const consumer = await js.consumers.get("chat_messages")
-      setStore("consumer", consumer)
-
-      await watchWorkspace()
-
-      const sub = await consumer.consume()
-      for await (const m of sub) {
-        onMessageReceived(m)
-      }
-    })()
-  })
 
   onCleanup(async () => {
     console.log("closing connection...")
