@@ -1,5 +1,5 @@
 import { SendHorizontalIcon } from "lucide-solid"
-import { Show, createSignal, onMount } from "solid-js"
+import { Show, createEffect, createSignal, on, onMount } from "solid-js"
 import type { MessageWithUser } from "../types"
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
 export default function ChannelView(props: Props) {
   const [message, setMessage] = createSignal("")
   let input: HTMLInputElement
+  let container: HTMLDivElement
 
   const onSubmit = (e: Event) => {
     e.preventDefault()
@@ -24,30 +25,37 @@ export default function ChannelView(props: Props) {
 
   onMount(() => input.focus())
 
+  createEffect(() => {
+    props.messages // dependency
+    container.scrollTop = container.scrollHeight
+  })
+
   return (
     <div class="w-full h-full flex flex-col">
       <div class="p-4 border-b border-zinc-800">
         <span class="text-xl font-medium"># {props.channel}</span>
       </div>
 
-      <div class="flex-grow flex flex-col justify-end p-6 gap-4">
-        {props.messages.map((msg) => (
-          <div class="flex flex-row gap-2">
-            <Show when={msg.user.photoURL}>
-              <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
-            </Show>
-            <Show when={!msg.user.photoURL}>
-              <div class="w-10 h-10 mt-1 rounded bg-zinc-800" />
-            </Show>
-            <div class="flex flex-col">
-              <div class="flex flex-row gap-2 items-center">
-                <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
-                <span class="text-zinc-400 text-xs mt-0.5">{formatDate(msg.timestamp)}</span>
+      <div ref={container} class="overflow-scroll flex-grow">
+        <div class="flex flex-col min-h-full justify-end p-6 gap-4">
+          {props.messages.map((msg) => (
+            <div class="flex flex-row gap-2">
+              <Show when={msg.user.photoURL}>
+                <img class="w-10 h-10 mt-1 rounded" src={msg.user.photoURL} />
+              </Show>
+              <Show when={!msg.user.photoURL}>
+                <div class="w-10 h-10 mt-1 rounded bg-zinc-800" />
+              </Show>
+              <div class="flex flex-col">
+                <div class="flex flex-row gap-2 items-center">
+                  <span class="text-zinc-100 font-semibold">{msg.user.name}</span>
+                  <span class="text-zinc-400 text-xs mt-0.5">{formatDate(msg.timestamp)}</span>
+                </div>
+                <span class="text-zinc-300">{msg.text}</span>
               </div>
-              <span class="text-zinc-300">{msg.text}</span>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       <div class="p-4">

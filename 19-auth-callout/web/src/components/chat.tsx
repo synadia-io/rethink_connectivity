@@ -63,6 +63,10 @@ export default function Chat() {
       authenticator: tokenAuthenticator(token)
     })
     setStore("conn", conn)
+    console.log("Connected!")
+    console.log("JWT:", token)
+    console.log("Email:", email)
+    console.log("Email (base64):", b64Email)
 
     const js = conn.jetstream()
     const consumer = await js.consumers.get("chat_messages")
