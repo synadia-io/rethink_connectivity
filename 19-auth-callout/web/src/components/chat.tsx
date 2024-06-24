@@ -1,7 +1,7 @@
 import { Show, createMemo, onCleanup, onMount } from "solid-js";
 import Sidebar from "./sidebar";
 import ChannelView from "./channel-view"
-import { StringCodec, connect, millis, tokenAuthenticator, type Consumer, type JsMsg, type NatsConnection } from "nats.ws";
+import { StringCodec, connect, millis, tokenAuthenticator, usernamePasswordAuthenticator, type Consumer, type JsMsg, type NatsConnection } from "nats.ws";
 import { createStore } from "solid-js/store";
 import type { Message, Channel, UserID, User } from "../types";
 import Login from "./login";
@@ -58,9 +58,13 @@ export default function Chat() {
 
   const onLogin = async (email: string, token: string) => {
     const b64Email = btoa(email)
+    const authenticator = token ?
+      tokenAuthenticator(token) :
+      usernamePasswordAuthenticator("user", "pass")
+
     const conn = await connect({
       servers: ["ws://localhost:8222"],
-      authenticator: tokenAuthenticator(token)
+      authenticator: authenticator
     })
     setStore("conn", conn)
     console.log("Connected!")
@@ -166,7 +170,7 @@ export default function Chat() {
   }
 
   return (
-    <Show when={store.user} fallback={<Login onSubmit={onLogin} useSSO />}>
+    <Show when={store.user} fallback={<Login onSubmit={onLogin} />}>
       <div class="inset-0 w-full h-lvh absolute flex flex-row">
         <Sidebar channels={channels} selected={store.channel} onSelect={(c) => setStore("channel", c)} />
         <ChannelView channel={store.channel} onSend={sendMessage} messages={channelMessages()} />
