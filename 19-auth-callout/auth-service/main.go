@@ -47,11 +47,6 @@ func main() {
 		claims := jwt.NewUserClaims(req.UserNkey)
 		claims.Audience = "CHAT"
 
-		if req.ConnectOptions.Username == "cli" && req.ConnectOptions.Password == "my-password" {
-			// Return claims with no permissions, backdoor method
-			return claims, nil
-		}
-
 		gClaims, err := v.VerifyGoogleJWT(req.ConnectOptions.Token)
 		if err != nil {
 			return nil, err
