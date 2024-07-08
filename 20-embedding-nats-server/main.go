@@ -1,37 +1,42 @@
 package main
 
 import (
-	"log"
-
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 	"time"
 )
 
 func main() {
+}
 
-	opts := &server.Options{}
+func RunEmbeddedServer(inProcess bool, enableLogging bool) (*nats.Conn, *server.Server, error) {
+	opts := &server.Options{
+		DontListen: inProcess,
+	}
 
 	ns, err := server.NewServer(opts)
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
 	}
 
-	ns.ConfigureLogger()
+	if enableLogging {
+		ns.ConfigureLogger()
+	}
 	go ns.Start()
 
 	if !ns.ReadyForConnections(5 * time.Second) {
-		log.Fatal("Embedded nats-server timed out")
+		return nil, nil, err
 	}
 
-	nc, err := nats.Connect(ns.ClientURL())
+	clientOpts := []nats.Option{}
+	if inProcess {
+		clientOpts = append(clientOpts, nats.InProcessServer(ns))
+	}
+
+	nc, err := nats.Connect(nats.DefaultURL, clientOpts...)
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
 	}
 
-	nc.Subscribe("hello.world", func(msg *nats.Msg) {
-		log.Println("Hello world")
-	})
-
-	ns.WaitForShutdown()
+	return nc, ns, err
 }
