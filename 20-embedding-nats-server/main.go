@@ -25,7 +25,6 @@ func main() {
 
 func RunEmbeddedServer(inProcess bool, enableLogging bool) (*nats.Conn, *server.Server, error) {
 	leafURL, err := url.Parse("nats-leaf://connect.ngs.global")
-	// leafURL, err := url.Parse("nats-leaf://0.0.0.0:7422")
 	if err != nil {
 		return nil, nil, err
 	}
