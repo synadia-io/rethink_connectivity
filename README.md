@@ -35,4 +35,5 @@ This repo hosts code examples and episodes for the [Rethink Connectivity](https:
 | 17  | Microservices Architectures in NATS | Mar 13, 2024 | [View Source](17-microservices-architectures)     | https://youtu.be/AiUazlrtgyU |
 | 18  | NATS and Benthos                    | Apr 11, 2024 | [View Source](18-benthos-and-nats)                | https://youtu.be/EA2Pco3EvpU |
 | 19  | NATS.io with Auth Callout           | Jun 25, 2024 | [View Source](19-auth-callout)                    | https://youtu.be/VvGxrT-jv64 |
+| 20  | Embedding NATS Server               | Jul 10, 2024 | [View Source](20-embedding-nats-server)           | https://youtu.be/cdTrl8UfcBo |
 
