@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATS Web Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #chat { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        #message { width: 70%; padding: 5px; }
+        #send { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>NATS Web Chat</h1>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Type your message...">
+    <button id="send">Send</button>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('send');
+
+        const socket = new WebSocket('ws://localhost:8080/ws');
+
+        socket.onmessage = function(event) {
+            const message = document.createElement('p');
+            message.textContent = event.data;
+            chat.appendChild(message);
+            chat.scrollTop = chat.scrollHeight;
+        };
+
+        function sendMessage() {
+            if (messageInput.value) {
+                socket.send(messageInput.value);
+                messageInput.value = '';
+            }
+        }
+
+        sendButton.onclick = sendMessage;
+        messageInput.onkeypress = function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        };
+    </script>
+</body>
+</html>
